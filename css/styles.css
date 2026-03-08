@@ -1,236 +1,146 @@
 /* ============================================================
-   MetroGuideIndia — styles.css
-   Theme: Warm Professional (Eye-Care Edition)
-   Palette: Ivory, Navy, Deep Red, Forest Green
+   MetroGuideIndia — styles.css (Dynamic Warm Edition)
+   Palette: Warm Sand (#fffbf5), Navy (#1a365d), Coral (#e11d48)
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap');
 
 :root {
-  /* Warm Palette */
-  --bg-warm:      #fffdf9; /* Soft Ivory - Reduces eye strain */
-  --card-bg:      #ffffff;
-  --primary-navy: #1a2e5a;
-  --text-main:    #2d3748;
-  --text-muted:   #718096;
-  --border-soft:  #eeeae3;
-  
-  /* System Colors */
-  --rrts-red:     #c53030;
-  --metro-green:  #276749;
+  --bg-warm: #fffbf5; /* Warm Eye-Care Background */
+  --card-bg: #ffffff;
+  --primary: #1a365d; /* Professional Navy */
+  --text-main: #2d3748;
+  --text-muted: #718096;
+  --border: #f1f5f9;
+  --rrts-red: #e11d48;
+  --metro-green: #10b981;
   --premium-gold: #b45309;
-  --interchange-bg: #ebf4ff;
-  
-  --radius:       14px;
-  --shadow-warm:  0 10px 25px -5px rgba(45, 55, 72, 0.04);
+  --radius: 16px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
   background-color: var(--bg-warm);
+  font-family: 'DM Sans', sans-serif;
   color: var(--text-main);
-  line-height: 1.6;
-  padding-bottom: 40px;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ─── Navigation ─── */
-nav {
-  background: white;
-  border-bottom: 1px solid var(--border-soft);
-  padding: 16px 0;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+/* ── Entrance Animation ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.nav-inner {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.animate-up {
+  animation: fadeInUp 0.5s ease-out forwards;
 }
 
-.logo {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-  font-size: 1.2rem;
-  color: var(--primary-navy);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+/* ── Container ── */
+.container { max-width: 600px; margin: 0 auto; padding: 20px; }
 
-/* ─── Announcement Ticker (Warm) ─── */
-.announcement-ticker {
-  background: #fef9c3; /* Soft yellow */
-  padding: 10px;
-  overflow: hidden;
-  border-bottom: 1px solid #fde047;
-}
-
-.ticker-content {
-  display: inline-block;
-  white-space: nowrap;
-  animation: ticker 30s linear infinite;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #854d0e;
-}
-
-@keyframes ticker {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-
-/* ─── Main Content ─── */
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-.hero-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 2.2rem;
-  text-align: center;
-  margin-bottom: 10px;
-  color: var(--primary-navy);
-}
-
-.hero-subtitle {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-bottom: 30px;
-}
-
-/* ─── Search Card ─── */
+/* ── Search Card (Dynamic Hover) ── */
 .search-card {
   background: var(--card-bg);
-  border: 1px solid var(--border-soft);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow-warm);
-  margin-bottom: 25px;
+  padding: 30px;
+  box-shadow: 0 10px 30px -5px rgba(26, 54, 93, 0.05);
+  transition: transform var(--transition), box-shadow var(--transition);
 }
 
-.search-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-  display: block;
+.search-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -10px rgba(26, 54, 93, 0.1);
 }
 
 .station-select {
   width: 100%;
-  padding: 14px;
-  background: #f8f9fa;
-  border: 2px solid #f1f1f1;
-  border-radius: 10px;
+  padding: 15px;
+  background: #f8fafc;
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
   font-size: 1rem;
-  margin-bottom: 15px;
-  transition: all 0.2s;
+  margin-top: 8px;
+  margin-bottom: 20px;
+  transition: border-color var(--transition);
+  cursor: pointer;
 }
 
 .station-select:focus {
-  border-color: var(--primary-navy);
+  border-color: var(--primary);
   outline: none;
   background: #fff;
 }
 
 .find-btn {
   width: 100%;
-  padding: 16px;
-  background: var(--primary-navy);
+  padding: 18px;
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-family: 'Syne', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1.1rem;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(26, 46, 90, 0.2);
+  box-shadow: 0 4px 15px rgba(26, 54, 93, 0.2);
+  transition: all var(--transition);
 }
 
-/* ─── Route Result Card ─── */
-.route-result-card {
-  background: white;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow-warm);
+.find-btn:hover {
+  filter: brightness(1.2);
+  transform: scale(1.02);
 }
 
-.class-selector {
-  display: flex;
-  background: #f1f1f1;
-  padding: 4px;
-  border-radius: 10px;
-  margin-bottom: 20px;
+/* ── Interchange Animation (Pulse) ── */
+.interchange-alert {
+  background: #eff6ff;
+  border: 2px dashed #3b82f6;
+  padding: 15px;
+  border-radius: 12px;
+  margin: 20px 0;
+  animation: pulse-blue 2s infinite;
 }
 
-.class-btn {
-  flex: 1;
-  border: none;
-  padding: 10px;
-  font-weight: 700;
-  border-radius: 8px;
-  cursor: pointer;
-  background: transparent;
-  color: var(--text-muted);
+@keyframes pulse-blue {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
 }
 
-.class-btn.active {
-  background: white;
-  color: var(--primary-navy);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.class-btn.premium.active { color: var(--premium-gold); }
-
-/* Timeline UI */
+/* ── Timeline ── */
 .route-timeline {
-  margin: 20px 0 20px 15px;
-  padding-left: 25px;
-  border-left: 2px solid #e2e8f0;
+  margin: 20px 0;
+  padding-left: 20px;
+  border-left: 3px solid #e2e8f0;
 }
 
 .timeline-step {
   position: relative;
-  padding-bottom: 25px;
+  padding-bottom: 30px;
+  opacity: 0;
+  animation: fadeInUp 0.4s ease-out forwards;
 }
+
+/* Staggered animation for list items */
+.timeline-step:nth-child(1) { animation-delay: 0.1s; }
+.timeline-step:nth-child(2) { animation-delay: 0.2s; }
+.timeline-step:nth-child(3) { animation-delay: 0.3s; }
 
 .node {
   position: absolute;
-  left: -32px;
-  width: 12px;
-  height: 12px;
+  left: -28px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: white;
-  border: 3px solid var(--primary-navy);
+  border: 3px solid var(--primary);
+  z-index: 2;
 }
 
-.station-name { font-weight: 700; font-size: 1.05rem; }
-.line-tag { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
-
-/* Interchange Alert */
-.interchange-alert {
-  background: var(--interchange-bg);
-  border: 1.5px dashed var(--primary-navy);
-  padding: 12px;
-  border-radius: 10px;
-  margin: 0 0 20px -15px;
-}
-
-.alert-text { font-size: 0.85rem; font-weight: 600; color: var(--primary-navy); }
-
-/* Responsive */
+/* ── Responsive ── */
 @media (max-width: 480px) {
   .hero-title { font-size: 1.8rem; }
   .container { padding: 15px; }
