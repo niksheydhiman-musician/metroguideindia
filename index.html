@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MetroGuideIndia — Delhi Meerut RRTS &amp; Meerut Metro Route Planner</title>
   <meta name="description" content="Find metro and RRTS routes between any stations on the Delhi–Meerut Namo Bharat RRTS and Meerut Metro. Get distance, fare, travel time and interchange instructions instantly." />
-  <meta name="keywords" content="RRTS route, Namo Bharat, Delhi Meerut RRTS, Meerut Metro, metro route planner India, NCRTC stations, RRTS stations list, metro fare calculator" />
   <link rel="stylesheet" href="css/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="animate-up">
 
   <nav>
     <div class="nav-inner">
@@ -28,18 +28,19 @@
 
       <div class="announcement-ticker">
         <div class="ticker-content" id="ticker-text">
-          ⚠️ Namo Bharat services now active from Sarai Kale Khan to Modipuram • Trains every 10 mins • Travel time approx 65 mins for full corridor.
+          ⚠️ Namo Bharat services now active from Sarai Kale Khan to Modipuram • Trains every 10 mins • Standard & Premium coaches available.
         </div>
       </div>
 
       <section class="hero">
+        <div class="hero-eyebrow" id="greeting">Welcome</div>
         <h1 class="hero-title" id="hero-title">
           India's Fastest<br>
           <span class="accent-red">Transit</span>
           <span class="accent-green"> Planner</span>
         </h1>
         <p class="hero-subtitle" id="hero-subtitle">
-          Find routes, distance, fare, and skip-stop schedules for Delhi–Meerut RRTS and Meerut Metro.
+          Plan your journey on the Delhi–Meerut RRTS and Meerut Metro with real-time route skipping logic.
         </p>
       </section>
 
@@ -52,8 +53,8 @@
             </select>
           </div>
 
-          <button class="swap-btn" id="swap-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <button class="swap-btn" id="swap-btn" title="Swap Stations">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M7 16l-4-4m0 0l4-4m-4 4h18M17 8l4 4m0 0l-4 4"/>
             </svg>
           </button>
@@ -76,12 +77,12 @@
       <section class="info-section">
         <div class="system-cards">
           <div class="system-card rrts">
-            <div class="system-card-name">Namo Bharat RRTS</div>
-            <div class="system-card-meta">Express Corridor</div>
+            <div class="system-card-name">Namo Bharat</div>
+            <div class="system-card-meta">Regional Express</div>
           </div>
           <div class="system-card metro">
             <div class="system-card-name">Meerut Metro</div>
-            <div class="system-card-meta">Local Urban Transit</div>
+            <div class="system-card-meta">Local Transit</div>
           </div>
         </div>
       </section>
@@ -92,7 +93,7 @@
   <footer>
     <div class="container">
       <div class="footer-logo">🚄 MetroGuideIndia</div>
-      <div class="footer-copy">© 2026 MetroGuideIndia. Powered by NCRTC Real-time Data.</div>
+      <div class="footer-copy">© 2026 MetroGuideIndia. Not an official NCRTC app.</div>
     </div>
   </footer>
 
@@ -104,6 +105,13 @@
     let appData = null;
     let graph = null;
     let currentLang = 'en';
+
+    // ── Dynamic Greeting ───────────────────────────────────
+    const hour = new Date().getHours();
+    const greeting = document.getElementById('greeting');
+    if (hour < 12) greeting.textContent = "Good Morning";
+    else if (hour < 17) greeting.textContent = "Good Afternoon";
+    else greeting.textContent = "Good Evening";
 
     // ── Init App ───────────────────────────────────────────
     (async () => {
@@ -122,10 +130,9 @@
       document.getElementById('lang-toggle').textContent = (currentLang === 'en') ? 'हिन्दी' : 'English';
       RouteUI.setLanguage(currentLang);
       
-      // Update Page Content
       document.getElementById('hero-title').innerHTML = currentLang === 'hi' 
         ? 'भारत का सबसे तेज़ <span class="accent-red">ट्रांजिट</span> <span class="accent-green">प्लानर</span>' 
-        : 'India\'s Fastest <span class="accent-red">Transit</span> <span class="accent-green">Planner</span>';
+        : 'India\'s Fastest <span class="accent-red">Transit</span> <span class="accent-planner">Planner</span>';
       
       document.getElementById('label-from').textContent = currentLang === 'hi' ? 'यहाँ से' : 'From';
       document.getElementById('label-to').textContent = currentLang === 'hi' ? 'यहाँ तक' : 'To';
@@ -135,9 +142,11 @@
     });
 
     function populateDropdowns() {
+      if (!appData) return;
       const { stations } = appData;
       ['source-select', 'dest-select'].forEach(id => {
         const sel = document.getElementById(id);
+        const currentVal = sel.value;
         sel.innerHTML = `<option value="">${currentLang === 'hi' ? 'स्टेशन चुनें' : 'Select station'}</option>`;
         
         stations.forEach(s => {
@@ -146,33 +155,55 @@
           opt.textContent = currentLang === 'hi' ? s.station_name_hi : s.station_name;
           sel.appendChild(opt);
         });
+        sel.value = currentVal;
       });
     }
 
     function handleFindRoute() {
       const src = document.getElementById('source-select').value;
       const dest = document.getElementById('dest-select').value;
+      const btn = document.getElementById('find-btn');
       
-      if (!src || !dest) return;
-
-      const path = RouteFinder.findRoute(graph, src, dest);
-      if (!path) {
-        alert('Route not found');
+      if (!src || !dest) {
+        alert(currentLang === 'hi' ? 'कृपया दोनों स्टेशनों का चयन करें' : 'Please select both stations');
         return;
       }
 
-      const distance = RouteFinder.calcDistance(path, graph);
-      const standardFare = RouteFinder.calcFare(distance);
-      const time = RouteFinder.calcTime(path, distance);
+      // Add loading state to button
+      btn.textContent = currentLang === 'hi' ? 'खोज रहे हैं...' : 'Finding...';
+      btn.style.opacity = '0.7';
 
-      RouteUI.renderRoute('route-result', path, appData.stations, appData.interchanges, distance, standardFare, time);
-      document.getElementById('route-result').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        const path = RouteFinder.findRoute(graph, src, dest);
+        btn.textContent = currentLang === 'hi' ? 'रास्ता खोजें' : 'Find Route';
+        btn.style.opacity = '1';
+
+        if (!path) {
+          alert('Route not found');
+          return;
+        }
+
+        const distance = RouteFinder.calcDistance(path, graph);
+        const standardFare = RouteFinder.calcFare(distance);
+        const time = RouteFinder.calcTime(path, distance);
+
+        RouteUI.renderRoute('route-result', path, appData.stations, appData.interchanges, distance, standardFare, time);
+        
+        // Smooth scroll to result
+        const resultSection = document.getElementById('route-result');
+        resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
     }
 
     document.getElementById('swap-btn').addEventListener('click', () => {
       const src = document.getElementById('source-select');
       const dest = document.getElementById('dest-select');
-      [src.value, dest.value] = [dest.value, src.value];
+      const temp = src.value;
+      src.value = dest.value;
+      dest.value = temp;
+      
+      // If result is already showing, update it automatically
+      if (src.value && dest.value) handleFindRoute();
     });
   </script>
 </body>
