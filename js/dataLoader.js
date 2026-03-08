@@ -1,29 +1,34 @@
 /**
- * dataLoader.js - Dynamic Version
- * Fixes path errors and ensures data is fetched before UI renders.
+ * dataLoader.js - Final Root-Relative Version
+ * Ensures data is fetched from the correct root path regardless of the URL.
  */
 const DataLoader = (() => {
   async function loadJSON(file) {
-    // Relative path strategy: Works on GitHub Pages root and custom domains
-    const path = `data/${file}`;
-    console.log(`System: Attempting to fetch ${path}...`);
+    // Adding a timestamp (?t=...) prevents the browser from loading old, cached errors
+    const cacheBuster = `?t=${new Date().getTime()}`;
+    const path = `data/${file}${cacheBuster}`;
+    
+    console.log(`System: Fetching from path: ${path}`);
 
     try {
       const response = await fetch(path);
+      
       if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status} at ${path}`);
+        throw new Error(`404: File not found at ${path}`);
       }
+
       const data = await response.json();
-      console.log(`System: Successfully loaded ${file}`);
+      console.log(`System: ✅ Successfully loaded ${file}`);
       return data;
     } catch (error) {
-      console.error(`Critical Error: Could not load ${file}. Ensure the 'data' folder is in the root.`, error);
+      console.error(`Critical Error: Could not load ${file}.`, error);
       throw error;
     }
   }
 
   async function loadAll() {
     try {
+      // Note: We are only loading the 4 files you actually have in your /data/ folder
       const [systems, lines, stations, connections] = await Promise.all([
         loadJSON('systems.json'),
         loadJSON('lines.json'),
@@ -34,11 +39,15 @@ const DataLoader = (() => {
       return { systems, lines, stations, connections };
     } catch (e) {
       // Injects a visible error if data fails to load
-      document.body.insertAdjacentHTML('afterbegin', 
-        `<div style="background:#fee2e2; color:#b91c1c; padding:15px; text-align:center; font-weight:bold; position:fixed; top:0; width:100%; z-index:9999;">
-          Data Load Error: Please check your 'data' folder location.
-        </div>`
-      );
+      const errorDiv = document.getElementById('data-error-overlay');
+      if (!errorDiv) {
+        document.body.insertAdjacentHTML('afterbegin', 
+          `<div id="data-error-overlay" style="background:#fff7ed; color:#9a3412; padding:20px; text-align:center; font-weight:600; border-bottom:2px solid #fdba74; position:relative; z-index:9999;">
+            ⚠️ Configuration Update: Please refresh the page (Ctrl + F5). <br>
+            <small style="font-weight:400; opacity:0.8;">If this persists, ensure your 'data' folder is in the root directory.</small>
+          </div>`
+        );
+      }
       throw e;
     }
   }
