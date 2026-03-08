@@ -6,7 +6,7 @@
   <title>MetroGuideIndia — Delhi Meerut RRTS &amp; Meerut Metro Route Planner</title>
   <meta name="description" content="Find metro and RRTS routes between any stations on the Delhi–Meerut Namo Bharat RRTS and Meerut Metro. Get distance, fare, travel time and interchange instructions instantly." />
   <link rel="stylesheet" href="css/styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Syne:wght@700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body class="animate-up">
 
@@ -106,14 +106,12 @@
     let graph = null;
     let currentLang = 'en';
 
-    // ── Dynamic Greeting ───────────────────────────────────
     const hour = new Date().getHours();
     const greeting = document.getElementById('greeting');
     if (hour < 12) greeting.textContent = "Good Morning";
     else if (hour < 17) greeting.textContent = "Good Afternoon";
     else greeting.textContent = "Good Evening";
 
-    // ── Init App ───────────────────────────────────────────
     (async () => {
       try {
         appData = await DataLoader.loadAll();
@@ -124,7 +122,6 @@
       }
     })();
 
-    // ── Language Toggle Logic ──────────────────────────────
     document.getElementById('lang-toggle').addEventListener('click', () => {
       currentLang = (currentLang === 'en') ? 'hi' : 'en';
       document.getElementById('lang-toggle').textContent = (currentLang === 'en') ? 'हिन्दी' : 'English';
@@ -132,7 +129,7 @@
       
       document.getElementById('hero-title').innerHTML = currentLang === 'hi' 
         ? 'भारत का सबसे तेज़ <span class="accent-red">ट्रांजिट</span> <span class="accent-green">प्लानर</span>' 
-        : 'India\'s Fastest <span class="accent-red">Transit</span> <span class="accent-planner">Planner</span>';
+        : 'India\'s Fastest <span class="accent-red">Transit</span> <span class="accent-green">Planner</span>';
       
       document.getElementById('label-from').textContent = currentLang === 'hi' ? 'यहाँ से' : 'From';
       document.getElementById('label-to').textContent = currentLang === 'hi' ? 'यहाँ तक' : 'To';
@@ -169,7 +166,6 @@
         return;
       }
 
-      // Add loading state to button
       btn.textContent = currentLang === 'hi' ? 'खोज रहे हैं...' : 'Finding...';
       btn.style.opacity = '0.7';
 
@@ -187,9 +183,8 @@
         const standardFare = RouteFinder.calcFare(distance);
         const time = RouteFinder.calcTime(path, distance);
 
-        RouteUI.renderRoute('route-result', path, appData.stations, appData.interchanges, distance, standardFare, time);
+        RouteUI.renderRoute('route-result', path, appData.stations, [], distance, standardFare, time);
         
-        // Smooth scroll to result
         const resultSection = document.getElementById('route-result');
         resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 300);
@@ -201,8 +196,6 @@
       const temp = src.value;
       src.value = dest.value;
       dest.value = temp;
-      
-      // If result is already showing, update it automatically
       if (src.value && dest.value) handleFindRoute();
     });
   </script>
